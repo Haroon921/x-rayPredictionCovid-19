@@ -1,1 +1,1 @@
-# x-rayPredictionCovid-19
+# X-rayPredictionCovid-19
