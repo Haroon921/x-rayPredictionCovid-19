@@ -3,6 +3,8 @@
 
 # Use Chest X-rays Images in Azure Machine Learning Studio to predict Covid-19.
 
+In this lab, I will walk you through on how to apply machine learning to predict COVID-19 cases from chest X-rays. By following the steps in this lab, you will be able to understand get started. I am hoping to reach individuals who are able to contribute their skills to this effort.
+
 ## Deploy Required Resources
 Click the below button to upload the provided ARM template to the Azure portal, which is written to automatically deploy and configure the following resources:
   1. An Azure Machine Learning Workspace set to Basic
