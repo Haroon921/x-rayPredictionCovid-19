@@ -25,6 +25,6 @@ Click the below button to upload the provided ARM template to the Azure portal, 
 This is a demo to showcase a Bot Framework, Luis and QnA maker use case.  It is not intended to be a framework or scalable architecture for all scenarios, though it can give you an idea of what your scenario might end up looking like.
 
 ## Further reading
-[Microsoft Learn AML with Hands-on-Labs](https://github.com/MicrosoftDocs/mslearn-aml-labs)
-[Azure Machine Learning documentation](https://docs.microsoft.com/en-in/azure/machine-learning/)
-[Deploy a Model in Azure Container Instances](https://docs.microsoft.com/en-in/azure/machine-learning/tutorial-deploy-models-with-aml)
+- [Microsoft Learn AML with Hands-on-Labs](https://github.com/MicrosoftDocs/mslearn-aml-labs)
+- [Azure Machine Learning documentation](https://docs.microsoft.com/en-in/azure/machine-learning/)
+- [Deploy a Model in Azure Container Instances](https://docs.microsoft.com/en-in/azure/machine-learning/tutorial-deploy-models-with-aml)
