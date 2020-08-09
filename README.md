@@ -13,6 +13,8 @@ Click the below button to upload the provided ARM template to the Azure portal, 
   2. Azure Key Vault
   3. Application Insights
   4. Storage Account (general purpose v2) with LRS (Locally-redundant storage)
+  5. Container Registry
+  6. Kubernetes Services
   
  </br>
     <a href="https%3A%2F%2Fraw.githubusercontent.com%2FHrashid789%2Fx-rayPredictionCovid-19%2Fmaster%2FAzureDeploy.json" target="_blank">
