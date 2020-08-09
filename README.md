@@ -22,14 +22,6 @@ Click the below button to upload the provided ARM template to the Azure portal, 
 1) [Covid Chestxray dataset](https://data.mendeley.com/datasets/rscbjbr9sj/2)
 2) [Mendeley](https://data.mendeley.com/datasets/rscbjbr9sj/2)
 
-### Limitations and Considerations
-
-This is a demo to showcase a Bot Framework, Luis and QnA maker use case.  It is not intended to be a framework or scalable architecture for all scenarios, though it can give you an idea of what your scenario might end up looking like.
-
-## Further reading
-- [Microsoft Learn AML with Hands-on-Labs](https://github.com/MicrosoftDocs/mslearn-aml-labs)
-- [Azure Machine Learning documentation](https://docs.microsoft.com/en-in/azure/machine-learning/)
-- [Deploy a Model in Azure Container Instances](https://docs.microsoft.com/en-in/azure/machine-learning/tutorial-deploy-models-with-aml)
 ## Using AML to create a new .ipynb and train a model:
 Before you begin make sure to create a folder called "data" with subfolders "covid & Normal" and upload all the images from the dataeset folder from this Github repo.
 ### Import Python libraries
@@ -600,6 +592,13 @@ else:
 print("prediction:", res)
 ```
 
+### Limitations and Considerations
 
+This is a demo to showcase the capabiliites of Azure machine learning and AKS.  It is not intended to be a framework or scalable architecture for all scenarios, though it can give you an idea of what your scenario might end up looking like.
+
+## Further reading
+- [Microsoft Learn AML with Hands-on-Labs](https://github.com/MicrosoftDocs/mslearn-aml-labs)
+- [Azure Machine Learning documentation](https://docs.microsoft.com/en-in/azure/machine-learning/)
+- [Deploy a Model in Azure Container Instances](https://docs.microsoft.com/en-in/azure/machine-learning/tutorial-deploy-models-with-aml)
 
 
