@@ -1,4 +1,4 @@
-# WIP
+
 ![Covid-19](Imges/imagexray.png)
 
 # Use Chest X-rays Images in Azure Machine Learning Studio to predict Covid-19 and deploy a web service to Azure Kubernetes Service (AKS)
@@ -30,6 +30,370 @@ This is a demo to showcase a Bot Framework, Luis and QnA maker use case.  It is 
 - [Microsoft Learn AML with Hands-on-Labs](https://github.com/MicrosoftDocs/mslearn-aml-labs)
 - [Azure Machine Learning documentation](https://docs.microsoft.com/en-in/azure/machine-learning/)
 - [Deploy a Model in Azure Container Instances](https://docs.microsoft.com/en-in/azure/machine-learning/tutorial-deploy-models-with-aml)
+## Using AML to create a new .ipynb and train a model:
+Before you begin make sure to create a folder called "data" with subfolders "covid & Normal" and upload all the images from the dataeset folder from this Github repo.
+### Import Python libraries
+```bash
+import warnings
+warnings.filterwarnings("ignore") 
+
+import os
+import math
+from PIL import Image
+import seaborn as sns
+from mlxtend.plotting import plot_confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
+import numpy as np
+import pandas as pd
+import cv2
+import glob
+import matplotlib.pyplot as plt
+```
+### Loading Covid X-ray Images
+```bash
+dataset_folder = 'project/dataset/covid/'
+```
+### Some random Images Covid X-ray
+```bash
+image_id = '1-s2.0-S1684118220300682-main.pdf-003-b2.png'
+img_data = Image.open(dataset_folder + image_id)
+img_data
+
+image_id = '03BF7561-A9BA-4C3C-B8A0-D3E585F73F3C.jpeg'
+img_data = Image.open(dataset_folder + image_id)
+img_data
+
+image_id = '6C94A287-C059-46A0-8600-AFB95F4727B7.jpeg'
+img_data = Image.open(dataset_folder + image_id)
+img_data
+
+image_id = '16660_1_1.jpg'
+img_data = Image.open(dataset_folder + image_id)
+img_data
+```
+### Loading Covid dataset all images and reshaping into 300*300 because all images have different sizes
+```bash
+Images=[]
+Covid_data = 'project/dataset/covid/'
+
+for img in os.listdir(Covid_data):
+    img_array = cv2.imread(os.path.join(Covid_data,img), cv2.IMREAD_GRAYSCALE)
+    img_pil = Image.fromarray(img_array)
+    img_300x300 = np.array(img_pil.resize((300, 300), Image.ANTIALIAS))
+    img_array = (img_300x300.flatten())
+    img_array  = img_array.reshape(-1,1).T
+    with open('Covid_Images.csv', 'ab') as f:
+        np.savetxt(f, img_array, delimiter=",")
+```
+### Loading Covid images data in csv file that we saved above
+```bash
+Covid_data = pd.read_csv('Covid_Images.csv', header=None)
+
+Covid_data
+```
+### Data Analysis and Preprocessing
+#### First five records
+```bash
+Covid_data.head()
+```
+#### last five records
+```bash
+Covid_data.tail()
+```
+#### Lenght of data
+```bash
+len(Covid_data)
+```
+#### Data information
+```bash
+Covid_data.info()
+```
+#### Giving class 0 to Covid images
+```bash
+Covid_data['class']=0
+Covid_data_X=Covid_data.drop(columns=['class'])
+Covid_data_y=Covid_data['class']
+```
+#### Rescalling the pixel values in the range of 0 and 1
+```bash
+Covid_data_X=Covid_data_X/255
+Covid_data_X=np.array(Covid_data_X)
+Covid_data_y=np.array(Covid_data_y)
+print(Covid_data_X.shape)
+Covid_data_y.shape
+```
+#### Loading Covid data
+```bash
+dataset_folder = 'project/dataset/Normal/'
+```
+#### Some random Images of NORMAL X-ray Images
+```bash
+image_id = 'IM-0115-0001.jpeg'
+img_data = Image.open(dataset_folder + image_id)
+img_data
+
+image_id = 'IM-0168-0001.jpeg'
+img_data = Image.open(dataset_folder + image_id)
+img_data
+
+image_id = 'IM-0187-0001.jpeg'
+img_data = Image.open(dataset_folder + image_id)
+img_data
+
+image_id = 'IM-0207-0001.jpeg'
+img_data = Image.open(dataset_folder + image_id)
+img_data
+```
+#### Loading Normal dataset all images and reshaping into 300*300 because all images have different sizes
+```bash
+Images=[]
+Normal_data = 'project/dataset/Normal/'
+
+for img in os.listdir(Normal_data):
+    img_array = cv2.imread(os.path.join(Normal_data,img), cv2.IMREAD_GRAYSCALE)
+    img_pil = Image.fromarray(img_array)
+    img_300x300 = np.array(img_pil.resize((300, 300), Image.ANTIALIAS))
+    img_array = (img_300x300.flatten())
+    img_array  = img_array.reshape(-1,1).T
+    with open('Normal_Images.csv', 'ab') as f:
+        np.savetxt(f, img_array, delimiter=",")
+```
+#### Loading Normal images data in csv file that we saved aboved
+```bash
+Normal_data = pd.read_csv('Normal_Images.csv', header=None)
+```
+### Data Analysis and Preprocessing
+#### First five records
+```bash
+Normal_data.head()
+```
+#### last five records
+```bash
+Normal_data.tail()
+```
+#### Lenght of data
+```bash
+len(Normal_data)
+```
+#### Data information
+```bash
+Normal_data.info()
+```
+#### Giving class 1 to Normal images
+```bash
+Normal_data['class']=1
+Normal_data_X=Normal_data.drop(columns=['class'])
+Normal_data_y=Normal_data['class']
+```
+#### Rescalling the pixel values in the range of 0 and 1
+```bash
+Normal_data_X=Normal_data_X/255
+Normal_data_X=np.array(Normal_data_X)
+Normal_data_y=np.array(Normal_data_y)
+print(Normal_data_X.shape)
+Normal_data_y.shape
+```
+### Combining the Covid and Normal images data
+```bash
+X=np.concatenate((Covid_data_X,Normal_data_X), axis=0)
+y=np.concatenate((Covid_data_y,Normal_data_y), axis=0)
+print("The Feature data has the shape ", X.shape)
+print("The Label data has the shape ", y.shape)
+unique, counts = np.unique(y, return_counts=True)
+plt.figure(figsize=(8,6))
+sns.barplot(x=unique, y=counts)
+plt.title('Counts of X-ray images of Covid and Normal')
+plt.ylabel('Count')
+plt.xlabel('Class (0:Covid, 1:Normal)')
+```
+### Spliting Dataset into 70% Training and 30% Testing
+```bash
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=2)
+```
+### SVM Support Vector Machine Algorithm
+```bash
+from sklearn.svm import LinearSVC
+
+svc=LinearSVC(C=1, max_iter=500)
+svc= svc.fit(X_train , y_train)
+svc
+```
+### Accuracy
+```bash
+y_pred1 = svc.predict(X_test)
+dm=svc.score(X_test, y_test)
+print('Accuracy score= {:.2f}'.format(svc.score(X_test, y_test)))
+```
+### Precision, Recall, F1
+```bash
+from sklearn.metrics import classification_report, confusion_matrix
+
+
+print('\n')
+print("Precision, Recall, F1")
+print('\n')
+CR=classification_report(y_test, y_pred1)
+print(CR)
+print('\n')
+```
+### Confusion Matrix
+```bash
+from sklearn.metrics import classification_report, confusion_matrix
+from mlxtend.plotting import plot_confusion_matrix
+
+
+print('\n')
+print("confusion matrix")
+print('\n')
+CR=confusion_matrix(y_test, y_pred1)
+print(CR)
+print('\n')
+
+fig, ax = plot_confusion_matrix(conf_mat=CR,figsize=(10, 10),
+                                show_absolute=True,
+                                show_normed=True,
+                                colorbar=True)
+plt.show()
+```
+### Graph comparison of predictions and true
+```bash
+y_pred = svc.predict(X_test)
+a=pd.DataFrame()
+a['true']=y_test
+a['predictions']=y_pred
+
+plt.figure(figsize=(25, 10))
+plt.subplot(1,1,1)
+plt.plot(a.true.values,color='red',label='True Cases')
+plt.plot(a.predictions.values,color='green',label='Predictions')
+
+plt.title('Comparison of true and predictions')
+plt.xlabel('Counts of images')
+plt.ylabel('Class as 0 cobid or 1 as normal')
+plt.legend(bbox_to_anchor=(1, 1))
+plt.show()
+```
+### Random Forest Algorithm
+```bash
+from sklearn.ensemble import RandomForestClassifier
+
+raf=RandomForestClassifier(min_samples_leaf=20, min_samples_split=20,random_state=100)
+raf= raf.fit(X_train , y_train)
+raf
+```
+### Accuracy
+```bash
+y_pred1 = raf.predict(X_test)
+rf=raf.score(X_test, y_test)
+print('Accuracy score= {:.2f}'.format(raf.score(X_test, y_test)))
+```
+### Precision, Recall, F1
+```bash
+from sklearn.metrics import classification_report, confusion_matrix
+
+
+print('\n')
+print("Precision, Recall, F1")
+print('\n')
+CR=classification_report(y_test, y_pred1)
+print(CR)
+print('\n')
+```
+### Confusion Matrix
+```bash
+from sklearn.metrics import classification_report, confusion_matrix
+from mlxtend.plotting import plot_confusion_matrix
+
+
+print('\n')
+print("confusion matrix")
+print('\n')
+CR=confusion_matrix(y_test, y_pred1)
+print(CR)
+print('\n')
+
+fig, ax = plot_confusion_matrix(conf_mat=CR,figsize=(10, 10),
+                                show_absolute=True,
+                                show_normed=True,
+                                colorbar=True)
+plt.show()
+```
+### Comparison of all algorithms Results
+```bash
+pip install PrettyTable
+from prettytable import PrettyTable
+x = PrettyTableprg()
+print('\n')
+print("Comparison of all algorithm results")
+x.field_names = ["Model", "Accuracy"]
+
+
+x.add_row(["SVM Algorithm", round(dm,2)])
+x.add_row(["Random Forest Algorithm", round(rf,2)])
+
+print(x)
+print('\n')
+```
+### Best Model is SVM algorithm with higest accuracy
+```bash
+x = PrettyTable()
+print('\n')
+print("Best Model.")
+x.field_names = ["Model", "Accuracy"]
+x.add_row(["SVM",round(dm,2)])
+print(x)
+print('\n')
+```
+### Now, as we know SVM working good so going to train on all data
+```bash
+svc=LinearSVC(C=1, max_iter=500)
+svc= svc.fit(X , y)
+svc
+```
+### Saving Trained model
+```bash
+import pickle
+
+Train_model='Trained_model'
+with open(Train_model, 'wb') as file:
+    pickle.dump(svc, file)
+```
+### Loading saved model
+```bash
+import pickle
+Train_model='Trained_model'
+with open(Train_model, 'rb') as file:
+    Train_model_loaded = pickle.load(file)
+```
+### Loading X-ray image from X_ray_Image_for_prediction
+```bash
+Images=[]
+data = 'project/X_ray_Image_for_prediction/'
+
+for img in os.listdir(data):
+    img_array = cv2.imread(os.path.join(data,img), cv2.IMREAD_GRAYSCALE)
+    img_pil = Image.fromarray(img_array)
+    img_300x300 = np.array(img_pil.resize((300, 300), Image.ANTIALIAS))
+    img_array = (img_300x300.flatten())
+    img_array  = img_array.reshape(-1,1).T
+img_array.shape
+```
+### The image is from the Covid x-ray so the model should predict Covid as well
+```bash
+from IPython.display import display
+from PIL import Image
+covid="project/covid.jpg"
+healthy="project/healthy.jpg"
+aa=Train_model_loaded.predict(img_array)
+if aa==0:
+    print("Covid X-ray")
+    display(Image.open(covid))
+else:
+    print("Normal X-ray")
+    display(Image.open(healthy))
+```
 
 ## Deploying a web service to Azure Kubernetes Service (AKS)
 
