@@ -9,7 +9,7 @@ In this lab, I will walk you through on how to apply machine learning to predict
 You can use this url to try it out [Covid Chestxray image upload web service](https://http://covid19screening.azurewebsites.net/)
 # Reference Architecture
 
-![Reference Architecture](Imges/AML.png)
+![Reference Architecture](Imges/AML.jpg)
 
 ## Deploy Required Resources
 Click the below button to upload the provided ARM template to the Azure portal, which is written to automatically deploy and configure the following resources:
