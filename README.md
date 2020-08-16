@@ -6,7 +6,7 @@
 
 In this lab, I will walk you through on how to apply machine learning to predict COVID-19 cases from chest X-rays. By following the steps in this lab, you will be able to understand get started. I am hoping to reach individuals who are able to contribute their skills to this effort.
 
-You can use this url to try it out [Covid Chestxray image upload web service](https://http://covid19screening.azurewebsites.net/)
+You can use this url to try it out [Covid Chestxray image upload web service](http://covid19screening.azurewebsites.net/)
 # Reference Architecture
 
 ![Reference Architecture](Imges/AML.jpg)
